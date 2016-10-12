@@ -17,8 +17,7 @@ class SingleStatistics extends React.Component {
     };
   }
 
-  componentWillReceiveProps(props) {
-    const prices = props.prices;
+  componentWillReceiveProps({prices}) {
     const initial = (prices.length == 0)? 0 : prices[0].adjusted;
     const returns = prices.map((price) => ((price.close - initial)*100/initial));
     const positive_returns = returns.filter((val) => {return (val > 0);})
@@ -28,7 +27,7 @@ class SingleStatistics extends React.Component {
   }
 
   componentDidUpdate() {
-    var chart = AmCharts.makeChart("stock-distribution", {
+    let chart = AmCharts.makeChart("stock-distribution", {
       "type": "serial",
       "theme": "light",
       "marginTop":0,

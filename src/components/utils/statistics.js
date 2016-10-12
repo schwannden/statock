@@ -53,4 +53,4 @@ export function binCount(array, bins) {
     counts.push({x: Math.round((low + high)/2*100)/100, y:0})
   }
   return counts.map(count => {count.y /= n; return count;});
-}
+};

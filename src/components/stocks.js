@@ -47,16 +47,11 @@ class Stocks extends React.Component {
     this.setState(new_state, this.filterAndSelect(this.props));
   }
 
-  filterAndSelect(props) {
+  filterAndSelect({exchanges, stocks, dispatch, onStockSelect}) {
     return () => {
-      const exchanges = props.exchanges,
-        stocks = props.stocks,
-        dispatch = props.dispatch,
-        onStockSelect = props.onStockSelect,
-        search = this.state.search;
+      const search = this.state.search;
       if (stocks.length > 0 && exchanges.length > 0) {
-        let exchange_id = this.state.exchange_id,
-          stock_id = this.state.stock_id;
+        let {exchange_id, stock_id} = this.state;
         if (exchange_id == -1) exchange_id = exchanges[0].id;
         const filteredStocks = stocks.filter(stock => 
           ((stock.exchange_id == exchange_id) &&
