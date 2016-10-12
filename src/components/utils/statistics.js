@@ -38,3 +38,19 @@ export function diffOfMean(r1, r2, v1, v2) {
   }
   return jStat.ztest(z, 2);
 };
+
+export function binCount(array, bins) {
+  array = array.sort((x, y) => x - y);
+  const n = array.length, min = array[0], max = array[n-1], delta = (max-min)/bins;
+  let low = min, high = min + delta, counts = [{x: Math.round((low + high)/2*100)/100, y:0}], arr_index = 0, point = 0;
+  for (let i = 0 ; i < bins ; i++) {
+    while (((point=array[arr_index]), (point >= low && point < high))) {
+      counts[i].y++;
+      arr_index++;
+    }
+    low = high;
+    high += delta;
+    counts.push({x: Math.round((low + high)/2*100)/100, y:0})
+  }
+  return counts.map(count => {count.y /= n; return count;});
+}

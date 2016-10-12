@@ -23,15 +23,7 @@ class SingleStatistics extends React.Component {
     const returns = prices.map((price) => ((price.close - initial)*100/initial));
     const positive_returns = returns.filter((val) => {return (val > 0);})
     const s_mean = jStat.mean(returns), s_var = jStat.variance(returns);
-    let distribution_data = [];
-    const min = s_mean - 3 * s_var, max = s_mean + 3 * s_var;
-    for ( var i = min; i < max; i += 0.1 ) {
-      var dp = {
-        x: i,
-        y: jStat.normal.pdf( i, s_mean, s_var),
-      };
-      distribution_data.push(dp);
-    }
+    const distribution_data = myStat.binCount(returns, 40);
     this.setState({distribution_data, returns, positive_returns, s_mean, s_var});
   }
 
@@ -44,7 +36,7 @@ class SingleStatistics extends React.Component {
       "dataProvider": this.state.distribution_data,
       "valueAxes": [{
           "axisAlpha": 0,
-          "position": "left"
+          "position": "left",
       }],
       "graphs": [{
           "id":"g1",
@@ -132,7 +124,7 @@ class SingleStatistics extends React.Component {
             </tr>
           </tbody>
         </Table>
-        <h3> Distribution </h3>
+        <h3> Distribution (Bin Counting) </h3>
         <div id={"stock-distribution"}> </div>
       </div>
     );
