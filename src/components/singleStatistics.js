@@ -75,7 +75,7 @@ class SingleStatistics extends React.Component {
     return (
       <div>
         <h3> Statistics </h3>
-        <Table bordered striped condensed>
+        <Table bordered striped condensed responsive>
           <thead>
             <tr>
               <th>Source</th>
@@ -103,7 +103,7 @@ class SingleStatistics extends React.Component {
           </tbody>
         </Table>
         <h3> Hypothesis Testing for return = 0 </h3>
-        <Table bordered striped condensed>
+        <Table bordered striped condensed responsive>
           <thead>
             <tr>
               <th>Assumption</th>

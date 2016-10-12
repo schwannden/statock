@@ -23,7 +23,7 @@ class SingleStatistics extends React.Component {
     return (
       <div>
         <h3> Statistics </h3>
-        <Table bordered striped condensed>
+        <Table bordered striped condensed responsive>
           <thead>
             <tr>
               <th>covariance</th>
@@ -38,7 +38,7 @@ class SingleStatistics extends React.Component {
           </tbody>
         </Table>
         <h3> Hypothesis Testing for Equality of Mean </h3>
-        <Table bordered striped condensed>
+        <Table bordered striped condensed responsive>
           <thead>
             <tr>
               <th>Assumption</th>
