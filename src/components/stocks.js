@@ -70,7 +70,7 @@ class Stocks extends React.Component {
   render() {
     return (
       <Row>
-        <Col xs={2}>
+        <Col md={2}>
           <FormGroup controlId="select-exchange">
             <ControlLabel>Exchange</ControlLabel>
             <FormControl componentClass="select" placeholder="select" onChange={this.onExchangeSelect}>
@@ -82,13 +82,13 @@ class Stocks extends React.Component {
             </FormControl>
           </FormGroup>
         </Col>
-        <Col xs={3}>
+        <Col md={3}>
           <FormGroup controlId="text-search">
             <ControlLabel>Symbol / Keyword</ControlLabel>
             <FormControl type="text" placeholder="Search" onChange={this.onSearchInput} />
           </FormGroup>
         </Col>
-        <Col xs={7}>
+        <Col md={7}>
           <FormGroup controlId="select-stock">
             <ControlLabel>Stock</ControlLabel>
             <FormControl componentClass="select" placeholder="select" value={this.state.stock_id} onChange={this.onStockSelect}>
