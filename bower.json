@@ -1,0 +1,25 @@
+{
+  "name": "StaTock",
+  "description": "StaTock - Statistics and Stocks",
+  "authors": [
+    "Schwannden"
+  ],
+  "copyright": "Schwannden Studio, email: schwannden@gmail.com",
+  "keywords": [
+    "statistics",
+    "stock",
+    "reactjs"
+  ],
+  "homepage": "",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "PACE": "pace#~1.0.2"
+  }
+}

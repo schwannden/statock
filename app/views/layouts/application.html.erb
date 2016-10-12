@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html class="default" dir='<%= rubix_dir %>'>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <title>StaStock :: Statistics and Stocks</title>
+    <meta name="application-name" content="StaTock">
+    <meta name="author" content="Schwannden Kuo, schwannden@gmail.com">
+    <meta name="description" content="statistical analysis with stock data">
+    <meta name="keywords" content="statistics, finance, stocks">
+    <meta name="robots" content="index, follow">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="apple-touch-icon" sizes="57x57" href="/favicons/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/favicons/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/favicons/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/favicons/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="/favicons/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/favicons/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/favicons/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/favicons/apple-icon-152x152.png">
+    <meta name="apple-mobile-web-app-title" content="Rubix">
+    <link rel="icon" type="image/png" href="/favicons/favicon-96x96.png" sizes="96x96">
+    <link rel="icon" type="image/png" href="/favicons/favicon-16x16.png" sizes="16x16">
+    <link rel="icon" type="image/png" href="/favicons/favicon-32x32.png" sizes="32x32">
+    <meta name="msapplication-TileColor" content="#E76049">
+    <meta name="msapplication-TileImage" content="/favicons/mstile-144x144.png">
+    <script src="https://www.amcharts.com/lib/3/amcharts.js"></script>
+    <script src="https://www.amcharts.com/lib/3/serial.js"></script>
+    <script src="https://www.amcharts.com/lib/3/amstock.js"></script>
+    <script src="https://www.amcharts.com/lib/3/plugins/dataloader/dataloader.min.js"></script>
+    <script src="https://www.amcharts.com/lib/3/plugins/export/export.min.js"></script>
+    <script src="https://www.amcharts.com/lib/3/themes/light.js"></script>
+    <link rel="stylesheet" href="https://www.amcharts.com/lib/3/plugins/export/export.css" type="text/css" media="all" />
+    <link rel="stylesheet" href="/css/pace.css"/>
+    <link rel="stylesheet" href="https://unpkg.com/react-select/dist/react-select.css">
+    <script type="text/javascript" src="/bower_components/PACE/pace.min.js"></script>
+
+    <%= csrf_meta_tags %>
+    <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+
+  </head>
+  <body data-version="4.0.0" class="pace-big">
+    <div id="app-container">
+      <%= yield %>
+    </div>
+    <!-- Load Rubix assets -->
+    <%= rubix_assets %>
+  </body>
+</html>
