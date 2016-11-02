@@ -7,6 +7,7 @@ Rails.application.routes.draw do
 
   root 'welcome#index'
   get '/paired', to: 'welcome#index'
+  get '/portfolio-theory', to: 'welcome#index'
 
   resources :stocks, only: [:index, :show] do
     resources :prices, only: [:index]

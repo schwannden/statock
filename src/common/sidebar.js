@@ -25,6 +25,7 @@ class ApplicationSidebar extends React.Component {
                 <SidebarNav style={{marginBottom: 0}} ref={(c) => this._nav = c}>
                   <SidebarNavItem glyph='glyphicon glyphicon-play' name='Single Study' href='/' />
                   <SidebarNavItem glyph='glyphicon glyphicon-forward' name='Paired Study' href='/paired' />
+                  <SidebarNavItem glyph='glyphicon glyphicon-file' name='Portfolio Theory' href='/portfolio-theory' />
                 </SidebarNav>
               </div>
             </Col>

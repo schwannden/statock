@@ -1,11 +1,8 @@
 import {combineReducers} from 'redux';
-import stocks from './stocksReducer';
-import prices from './pricesReducer';
-import pairedPrices from './pairedPricesReducer';
-import exchanges from './exchangesReducer';
+import finance from './financeReducer';
 
 const rootReducer = combineReducers({
-  stocks, exchanges, prices, pairedPrices,
+  finance,
 });
 
 export default rootReducer;

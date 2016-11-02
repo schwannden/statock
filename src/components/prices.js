@@ -3,28 +3,34 @@ import {connect} from 'react-redux';
 
 class Prices extends React.Component {
   componentDidUpdate() {
-    var chart = AmCharts.makeChart( "stock-price", {
+    this.plot();
+  }
+  componentDidMount() {
+    this.plot();
+  }
+  plot() {
+    var chart = AmCharts.makeChart( this.props.plot_id, {
       "type": "stock",
       "theme": "light",
  
       "dataSets": [ {
         "title": "return (close value of indicated day - open value of the first day in range)",
-        "fieldMappings": [ { "fromField": "open", "toField": "open" }, 
-                           { "fromField": "high", "toField": "high" }, 
-                           { "fromField": "low", "toField": "low" }, 
-                           { "fromField": "adjusted", "toField": "adjusted" }, 
-                           { "fromField": "close", "toField": "close" }, 
-                           { "fromField": "volume", "toField": "volume" } 
+        "fieldMappings": [ { "fromField": "open", "toField": "open", }, 
+                           { "fromField": "high", "toField": "high", }, 
+                           { "fromField": "low", "toField": "low", }, 
+                           { "fromField": "adjusted", "toField": "adjusted", }, 
+                           { "fromField": "close", "toField": "close", }, 
+                           { "fromField": "volume", "toField": "volume", }, 
         ],
         "compared": false,
         "categoryField": "dateAdj",
-        "dataProvider": this.props.prices
+        "dataProvider": this.props.stock.prices,
       }, {
         "title": "return calculated with adjusted close price",
         "fieldMappings": [ { "fromField": "adjusted", "toField": "adjusted" } ],
         "compared": true,
         "categoryField": "dateAdj",
-        "dataProvider": this.props.prices
+        "dataProvider": this.props.stock.prices,
       }],
       "dataDateFormat": "YYYY-MM-DD",
       "panels": [
@@ -162,20 +168,25 @@ class Prices extends React.Component {
   }
 
   render() {
+    const style = {width: "100%", height: "500px",};
     return (
-      <div id={"stock-price"}> </div>
+      <div id={this.props.plot_id} style={style}></div>
     );
   }
 }
 
-function mapStateToProps(state, ownProps) {
-  return {
-    prices: state.prices,
-  };
+function mapStateToProps(state, {store_id}) {
+  const selector = state.finance.selector[store_id];
+  const stock = selector.selected_stocks.length == 0? 
+    {prices: [], returns: []} : 
+    selector.selected_stocks[0];
+  return { stock, };
 }
 
 Prices.propTypes = {
-  prices: PropTypes.array.isRequired,
+  store_id: PropTypes.string.isRequired,
+  plot_id: PropTypes.string.isRequired,
+  stock: PropTypes.object.isRequired,
 };
 
 export default connect(mapStateToProps)(Prices);

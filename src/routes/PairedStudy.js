@@ -14,6 +14,8 @@ import {
   PanelContainer,
 } from '@sketchpixy/rubix';
 
+const store_id = ["paired1", "paired2"];
+
 class PairedStudy extends React.Component {
 
   render () {
@@ -26,8 +28,8 @@ class PairedStudy extends React.Component {
                 <Row>
                   <Col xs={12}>
                     <h3>Select Stock</h3>
-                    <Stocks onStockSelect={stockActions.paired_prices(0)}/>
-                    <Stocks onStockSelect={stockActions.paired_prices(1)}/>
+                    <Stocks store_id={store_id[0]} multiple={false}/>
+                    <Stocks store_id={store_id[1]} multiple={false}/>
                   </Col>
                 </Row>
               </Grid>
@@ -40,7 +42,7 @@ class PairedStudy extends React.Component {
               <Grid>
                 <Row>
                   <Col xs={12}>
-                    <PairedStatistics />
+                    <PairedStatistics store_id={store_id}/>
                   </Col>
                 </Row>
               </Grid>

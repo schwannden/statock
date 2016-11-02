@@ -5,21 +5,9 @@ import * as myStat from './utils/statistics';
 
 import { Table } from '@sketchpixy/rubix';
 
-class SingleStatistics extends React.Component {
-  constructor(props, context) {
-    super(props, context);
-    this.state = {
-      returns: [[], []],
-    };
-  }
-
-  componentWillReceiveProps(props) {
-    const returns = props.pairedPrices.map((prices) => myStat.fromPriceToReturns(prices));
-    this.setState({returns});
-  }
-
+class PairedStatistics extends React.Component {
   render() {
-    const r1 = this.state.returns[0], r2 = this.state.returns[1];
+    const r1 = this.props.returns1, r2 = this.props.returns2;
     return (
       <div>
         <h3> Statistics </h3>
@@ -61,14 +49,19 @@ class SingleStatistics extends React.Component {
   }
 }
 
-function mapStateToProps(state, ownProps) {
+function mapStateToProps(state, {store_id}) {
+  const stock1 = state.finance.selector[store_id[0]].selected_stocks[0],
+    stock2 = state.finance.selector[store_id[1]].selected_stocks[0];
   return {
-    pairedPrices: state.pairedPrices,
+    returns1: stock1 == undefined? [] : stock1.returns,
+    returns2: stock2 == undefined? [] : stock2.returns,
   };
 }
 
-SingleStatistics.propTypes = {
-  pairedPrices: PropTypes.array.isRequired,
+PairedStatistics.propTypes = {
+  store_id: PropTypes.array.isRequired,
+  returns1: PropTypes.array.isRequired,
+  returns2: PropTypes.array.isRequired,
 };
 
-export default connect(mapStateToProps)(SingleStatistics);
+export default connect(mapStateToProps)(PairedStatistics);

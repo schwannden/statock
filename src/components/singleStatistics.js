@@ -6,33 +6,23 @@ import * as myStat from './utils/statistics';
 import { Table } from '@sketchpixy/rubix';
 
 class SingleStatistics extends React.Component {
-  constructor(props, context) {
-    super(props, context);
-    this.state = {
-      distribution_data: [],
-      returns: [],
-      positive_returns: [],
-      s_mean: 0,
-      s_var: 0,
-    };
-  }
-
-  componentWillReceiveProps({prices}) {
-    const initial = (prices.length == 0)? 0 : prices[0].adjusted;
-    const returns = prices.map((price) => ((price.close - initial)*100/initial));
-    const positive_returns = returns.filter((val) => {return (val > 0);})
-    const s_mean = jStat.mean(returns), s_var = jStat.variance(returns);
-    const distribution_data = myStat.binCount(returns, 40);
-    this.setState({distribution_data, returns, positive_returns, s_mean, s_var});
+  componentDidMount() {
+    this.plotDistribution();
   }
 
   componentDidUpdate() {
+    this.plotDistribution();
+  }
+
+  plotDistribution() {
+    const {returns} = this.props.stock;
+    const distribution_data = myStat.binCount(returns, 40);
     let chart = AmCharts.makeChart("stock-distribution", {
       "type": "serial",
       "theme": "light",
       "marginTop":0,
       "marginRight": 80,
-      "dataProvider": this.state.distribution_data,
+      "dataProvider": distribution_data,
       "valueAxes": [{
           "axisAlpha": 0,
           "position": "left",
@@ -69,8 +59,9 @@ class SingleStatistics extends React.Component {
   }
 
   render() {
-    const s_mean = this.state.s_mean, s_var = this.state.s_var,
-      returns = this.state.returns, positive_returns = this.state.positive_returns;
+    const {returns} = this.props.stock;
+    const positive_returns = returns.filter((val) => {return (val > 0);})
+    const s_mean = jStat.mean(returns), s_var = jStat.variance(returns);
     return (
       <div>
         <h3> Statistics </h3>
@@ -87,8 +78,8 @@ class SingleStatistics extends React.Component {
           <tbody>
             <tr>
               <td>All Returns</td>
-              <td>{this.state.s_mean}</td>
-              <td>{this.state.s_var}</td>
+              <td>{s_mean}</td>
+              <td>{s_var}</td>
               <td>{jStat.kurtosis(returns)}</td>
               <td>{jStat.skewness(returns)}</td>
             </tr>
@@ -114,7 +105,7 @@ class SingleStatistics extends React.Component {
             <tr>
               <td>Variance Known (use sample variance)</td>
               <td>{jStat.ztest(s_mean * Math.sqrt(returns.length / s_var), 2)}</td>
-              <td>{JSON.stringify(myStat.meanCI(returns, 0.95, this.state.s_var))}</td>
+              <td>{JSON.stringify(myStat.meanCI(returns, 0.95, s_var))}</td>
             </tr>
             <tr>
               <td>Variance Unknown</td>
@@ -130,14 +121,17 @@ class SingleStatistics extends React.Component {
   }
 }
 
-function mapStateToProps(state, ownProps) {
-  return {
-    prices: state.prices,
-  };
+function mapStateToProps(state, {store_id}) {
+  const selector = state.finance.selector[store_id];
+  const stock = selector.selected_stocks.length == 0? 
+    {prices: [], returns: []} : 
+    selector.selected_stocks[0];
+  return { stock, };
 }
 
 SingleStatistics.propTypes = {
-  prices: PropTypes.array.isRequired,
+  store_id: PropTypes.string.isRequired,
+  stock: PropTypes.object.isRequired,
 };
 
 export default connect(mapStateToProps)(SingleStatistics);

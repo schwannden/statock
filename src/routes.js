@@ -10,6 +10,7 @@ import Sidebar from './common/sidebar';
 
 import SingleStudy from './routes/SingleStudy';
 import PairedStudy from './routes/PairedStudy';
+import PortfolioTheory from './routes/PortfolioTheory';
 
 class App extends React.Component {
   render() {
@@ -35,5 +36,6 @@ export default (
   <Route path='/' component={App}>
     <IndexRoute component={SingleStudy} />
     <Route path='/paired' component={PairedStudy} />
+    <Route path='/portfolio-theory' component={PortfolioTheory} />
   </Route>
 );

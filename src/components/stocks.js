@@ -1,6 +1,6 @@
 import React, {PropTypes} from 'react';
 import {connect} from 'react-redux';
-import * as stockActions from '../actions/stockActions';
+import StockActions from '../actions/stockActions';
 
 import { FormGroup, FormControl, ControlLabel, Col, Row } from '@sketchpixy/rubix';
 import Stock from './stock';
@@ -13,69 +13,74 @@ class Stocks extends React.Component {
     this.onExchangeSelect = this.onExchangeSelect.bind(this);
     this.onStockSelect = this.onStockSelect.bind(this);
     this.onSearchInput = this.onSearchInput.bind(this);
-    this.filterAndSelect = this.filterAndSelect.bind(this);
-    
-    this.state = {
-      exchange_id: -1,
-      search: "",
-      stock_id: -1,
-      filteredStocks: [],
-    };
   }
 
-  componentWillReceiveProps(nextProps) {
-    this.filterAndSelect(nextProps)();
+  componentWillReceiveProps(props) {
+    this.initialize(props);
   }
 
   componentDidMount() {
-    this.filterAndSelect(this.props)();
+    this.initialize(this.props);
+  }
+
+  initialize({selector, multiple, onStockSelect, dispatch}) {
+    const {selected_stocks, filtered_stocks} = selector;
+    if (!multiple && filtered_stocks.length > 0)
+      if (selected_stocks.length == 0) {
+        this.props.actions.prices(filtered_stocks[0]);
+      } else {
+        const {exchange_id, search_str} = selector;
+        const old = this.props.selector;
+        if (exchange_id != old.exchange_id || search_str != old.search_str) {
+          if (selected_stocks[0].id != filtered_stocks[0].id)
+            this.props.actions.prices(filtered_stocks[0]);
+        }
+      }
   }
 
   onExchangeSelect(e) {
-    const new_state = Object.assign({}, this.state, {exchange_id: e.target.value});
-    this.setState(new_state, this.filterAndSelect(this.props));
-  }
-
-  onStockSelect(e) {
-    const stock_id = e.target.value;
-    this.setState(Object.assign({}, this.state, {stock_id}));
-    this.props.dispatch(this.props.onStockSelect(stock_id));
+    this.props.actions.filter({
+      search_str: this.props.selector.search_str,
+      exchange_id: e.target.value,
+    });
   }
 
   onSearchInput(e) {
-    const new_state = Object.assign({}, this.state, {search: e.target.value.toUpperCase()});
-    this.setState(new_state, this.filterAndSelect(this.props));
+    this.props.actions.filter({
+      search_str: e.target.value,
+      exchange_id: this.props.selector.exchange_id,
+    });
   }
 
-  filterAndSelect({exchanges, stocks, dispatch, onStockSelect}) {
-    return () => {
-      const search = this.state.search;
-      if (stocks.length > 0 && exchanges.length > 0) {
-        let {exchange_id, stock_id} = this.state;
-        if (exchange_id == -1) exchange_id = exchanges[0].id;
-        const filteredStocks = stocks.filter(stock => 
-          ((stock.exchange_id == exchange_id) &&
-          (stock.name.toUpperCase().match(search) || stock.symbol.toUpperCase().match(search)))
-        );
-        if (stock_id != filteredStocks[0].id) {
-          stock_id = filteredStocks[0].id;
-          dispatch(onStockSelect(stock_id));
-        }
-        const new_state = Object.assign({}, this.state, {stock_id, exchange_id, filteredStocks});
-        this.setState(new_state);
-      }
+  onStockSelect(e) {
+    const stock_id = e.target.value, actions = this.props.actions;
+    const selected_stock = this.props.stocks.find(stock => stock.id == stock_id);
+    if (this.props.multiple) {
+      const {selected_stocks} = this.props.selector;
+      const remove_index = selected_stocks.findIndex(stock => stock.id == stock_id);
+      if (remove_index == -1)
+        actions.prices(selected_stock)
+      else
+        actions.remove(remove_index)
+    } else {
+      actions.prices(selected_stock)
     }
   }
 
   render() {
+    const {exchanges, multiple, selector} = this.props;
+    const {exchange_id, search_str, filtered_stocks, selected_stocks} = selector;
+    const selected_id = selected_stocks.length?
+      (multiple? selected_stocks.map((stock => stock.id)) : selected_stocks[0].id) :
+      (multiple? [] : "");
     return (
       <Row>
         <Col md={2}>
           <FormGroup controlId="select-exchange">
             <ControlLabel>Exchange</ControlLabel>
-            <FormControl componentClass="select" placeholder="select" onChange={this.onExchangeSelect}>
+            <FormControl componentClass="select" placeholder="select" onChange={this.onExchangeSelect} value={exchange_id}>
               {
-                this.props.exchanges.map(exchange =>
+                exchanges.map(exchange =>
                   <Exchange key={exchange.id} exchange={exchange}/>
                 )
               }
@@ -85,15 +90,16 @@ class Stocks extends React.Component {
         <Col md={3}>
           <FormGroup controlId="text-search">
             <ControlLabel>Symbol / Keyword</ControlLabel>
-            <FormControl type="text" placeholder="Search" onChange={this.onSearchInput} />
+            <FormControl type="text" placeholder="Search" onChange={this.onSearchInput} value={search_str}/>
           </FormGroup>
         </Col>
         <Col md={7}>
           <FormGroup controlId="select-stock">
             <ControlLabel>Stock</ControlLabel>
-            <FormControl componentClass="select" placeholder="select" value={this.state.stock_id} onChange={this.onStockSelect}>
+            <FormControl componentClass="select" placeholder="select" multiple={multiple}
+              value={selected_id} onChange={this.onStockSelect}>
               {
-                this.state.filteredStocks.map(stock =>
+                filtered_stocks.map(stock =>
                   <Stock key={stock.id} stock={stock} />
                 )
               }
@@ -107,15 +113,30 @@ class Stocks extends React.Component {
 
 function mapStateToProps(state, ownProps) {
   return {
-    stocks: state.stocks,
-    exchanges: state.exchanges,
+    stocks: state.finance.stocks,
+    exchanges: state.finance.exchanges,
+    selector: state.finance.selector[ownProps.store_id],
+  };
+}
+
+function mapDispatchToProps(dispatch, {store_id, multiple}) {
+  let stockActions = new StockActions(store_id, multiple);
+  return {
+    actions: {
+      prices: stock => dispatch(stockActions.prices(stock)),
+      remove: remove_index => dispatch(stockActions.remove(remove_index)),
+      filter: filter_options => dispatch(stockActions.filter(filter_options)),
+    }
   };
 }
 
 Stocks.propTypes = {
+  store_id: PropTypes.string.isRequired,
+  multiple: PropTypes.bool.isRequired,
   stocks: PropTypes.array.isRequired,
   exchanges: PropTypes.array.isRequired,
-  onStockSelect: PropTypes.func.isRequired,
+  selector: PropTypes.object.isRequired,
+  actions: PropTypes.object.isRequired,
 };
 
-export default connect(mapStateToProps)(Stocks);
+export default connect(mapStateToProps, mapDispatchToProps)(Stocks);

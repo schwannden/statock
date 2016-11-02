@@ -14,6 +14,10 @@ import {
   PanelContainer,
 } from '@sketchpixy/rubix';
 
+const selector_option = {
+  store_id: "single",
+  multiple: false,
+}
 class SingleStudy extends React.Component {
 
   render () {
@@ -26,7 +30,7 @@ class SingleStudy extends React.Component {
                 <Row>
                   <Col xs={12}>
                     <h3>Select Stock</h3>
-                    <Stocks onStockSelect={stockActions.prices}/>
+                    <Stocks {...selector_option}/>
                   </Col>
                 </Row>
               </Grid>
@@ -40,7 +44,7 @@ class SingleStudy extends React.Component {
                 <Row>
                   <Col xs={12}>
                     <h3> Price & Return</h3>
-                    <Prices />
+                    <Prices store_id={selector_option.store_id} plot_id={"single-stock-prices"}/>
                   </Col>
                 </Row>
               </Grid>
@@ -53,7 +57,7 @@ class SingleStudy extends React.Component {
               <Grid>
                 <Row>
                   <Col xs={12}>
-                    <SingleStatistics />
+                    <SingleStatistics store_id={selector_option.store_id} />
                   </Col>
                 </Row>
               </Grid>
