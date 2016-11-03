@@ -1,6 +1,6 @@
 import React, {PropTypes} from 'react';
 import {connect} from 'react-redux';
-import * as stockActions from '../actions/stockActions';
+import StockActions from '../actions/stockActions';
 import {jStat} from 'jStat';
 
 import {
@@ -12,6 +12,18 @@ import {
 } from '@sketchpixy/rubix';
 
 class Portfolio extends React.Component {
+
+  constructor(props, context) {
+    super(props, context);
+    this.onRemoveSelected = this.onRemoveSelected.bind(this);
+  }
+
+  onRemoveSelected(e) {
+    const stock_id = e.currentTarget.value, 
+      remove_index = this.props.portfolio.findIndex(stock => stock.id == stock_id);
+    this.props.actions.remove(remove_index);
+  }
+
   render() {
     const {portfolio} = this.props;
     return (
@@ -33,7 +45,10 @@ class Portfolio extends React.Component {
                 <td> {name} </td>
                 <td> {jStat.mean(returns)} </td>
                 <td> {jStat.variance(returns)} </td>
-                <td> <Button bsStyle="red" rounded> <Icon glyph="glyphicon glyphicon-trash"/> </Button> </td>
+                <td> <Button bsStyle="red" onClick={this.onRemoveSelected} value={id}> 
+                       <Icon glyph="glyphicon glyphicon-trash"/> 
+                     </Button> 
+                </td>
               </tr>
             )}
           </tbody>
@@ -49,9 +64,18 @@ function mapStateToProps(state, {store_id}) {
   };
 }
 
+function mapDispatchToProps(dispatch, {store_id, multiple}) {
+  let stockActions = new StockActions(store_id, multiple);
+  return {
+    actions: {
+      remove: remove_index => dispatch(stockActions.remove(remove_index)),
+    }
+  };
+}
 Portfolio.propTypes = {
   store_id: PropTypes.string.isRequired,
   portfolio: PropTypes.array.isRequired,
+  actions: PropTypes.object.isRequired,
 };
 
-export default connect(mapStateToProps)(Portfolio);
+export default connect(mapStateToProps, mapDispatchToProps)(Portfolio);

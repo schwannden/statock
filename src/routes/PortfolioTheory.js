@@ -13,7 +13,7 @@ import {
   PanelContainer,
 } from '@sketchpixy/rubix';
 
-const store_id="portfolio";
+const selector_option={store_id: "portfolio", multiple: true,};
 class PortfolioTheory extends React.Component {
   render () {
     return (
@@ -25,9 +25,9 @@ class PortfolioTheory extends React.Component {
                 <Row>
                   <Col xs={12}>
                     <h3>Select Stock</h3>
-                    <Stocks store_id={store_id} multiple={true}/>
+                    <Stocks {...selector_option}/>
                     <h3>Current Portfolio</h3>
-                    <Portfolio store_id={store_id}/>
+                    <Portfolio {...selector_option}/>
                   </Col>
                 </Row>
               </Grid>
