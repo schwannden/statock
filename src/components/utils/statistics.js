@@ -1,11 +1,15 @@
-import {jStat} from 'jStat';
+const {mean, normal, studentt, variance, ztest, sum,} = jStat;
+
+export function innerProduct(x, y) {
+  return sum(jStat([x, y]).product());
+}
 
 export function meanCI(array, confidence, variance) {
-  const s_mean = jStat.mean(array);
+  const s_mean = mean(array);
   const n = array.length;
   if (variance > 0) {
     const z = jStat.normal.inv((1-confidence)/2, 0, 1);
-    const c = Math.abs(z * Math.sqrt(variance / n));
+    const c = Math.abs(z * Math.sqrt(jStat.variance / n));
     return [s_mean - c, s_mean + c];
   } else {
     const t = jStat.studentt.inv((1-confidence)/2, n - 1);
@@ -16,7 +20,7 @@ export function meanCI(array, confidence, variance) {
 
 export function ttest(s_mean, s_variance, dof) {
   const t_score = -Math.abs(Math.sqrt((dof+1)/s_variance) * s_mean);
-  return 2 * jStat.studentt.cdf(t_score, dof);
+  return 2 * studentt.cdf(t_score, dof);
 };
 
 export function fromPriceToReturns(prices) {
@@ -25,18 +29,18 @@ export function fromPriceToReturns(prices) {
 };
 
 export function diffOfMean(r1, r2, v1, v2) {
-  const m1 = jStat.mean(r1), m2 = jStat.mean(r2), m = r1.length, n = r2.length;
+  const m1 = mean(r1), m2 = mean(r2), m = r1.length, n = r2.length;
   let z = 0;
   if (v1 > 0 && v2 > 0) {
     // if variance is known
     z = (m1 - m2)/Math.sqrt(v1/m + v2/n);
   } else if (m > 30 && n > 30) {
     // if variance is known
-    z = (m1 - m2)/Math.sqrt(jStat.variance(r1)/m + jStat.variance(r2)/n);
+    z = (m1 - m2)/Math.sqrt(variance(r1)/m + variance(r2)/n);
   } else {
     return "Too complicated to Test";
   }
-  return jStat.ztest(z, 2);
+  return ztest(z, 2);
 };
 
 export function binCount(array, bins) {
@@ -54,3 +58,14 @@ export function binCount(array, bins) {
   }
   return counts.map(count => {count.y /= n; return count;});
 };
+
+export function multiply21(x, y) {
+  const dim_x1 = x.length, dim_x2 = x[0].length, dim_y = y.length;
+  if (dim_x2 != dim_y)
+    throw("dimension mismatch")
+  let result = Array(dim_x1)
+  for (let i = 0 ; i < dim_x1 ; i++) {
+    result[i] = innerProduct(x[i], y);
+  }
+  return result;
+}

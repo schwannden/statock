@@ -1,7 +1,6 @@
 import React, {PropTypes} from 'react';
 import {connect} from 'react-redux';
 import StockActions from '../actions/stockActions';
-import {jStat} from 'jStat';
 
 import {
   Col, 
@@ -9,7 +8,13 @@ import {
   Table,
   Button,
   Icon,
+  Alert,
 } from '@sketchpixy/rubix';
+
+const runAnalysisBtn = 
+            <Button lg bsStyle='primary' block style={{margin: "10px"}}> run analysis </Button>;
+const runAnalysisHint = 
+            <Alert danger> Select at least two stocks before you can run portfolio analysis </Alert>;
 
 class Portfolio extends React.Component {
 
@@ -53,6 +58,7 @@ class Portfolio extends React.Component {
             )}
           </tbody>
         </Table>
+        {(portfolio.length > 1)?  runAnalysisBtn : runAnalysisHint }
       </Col>
     );
   }
@@ -72,6 +78,7 @@ function mapDispatchToProps(dispatch, {store_id, multiple}) {
     }
   };
 }
+
 Portfolio.propTypes = {
   store_id: PropTypes.string.isRequired,
   portfolio: PropTypes.array.isRequired,
