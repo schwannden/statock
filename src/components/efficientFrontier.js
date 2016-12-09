@@ -29,23 +29,32 @@ class EfficienrFrontier extends React.Component {
     const g = covInv.map((row) => ((B * sum(row) - A * innerProduct(row, r)) / D)),
       h = covInv.map((row) => ((- A * sum(row) + C * innerProduct(row, r)) / D)),
       temp2 = multiply21(covMatrix, h), a = innerProduct(g, multiply21(covMatrix, g)),
-      b = 2 * innerProduct(g, temp2), c = innerProduct(h, temp2);
+      b = 2 * innerProduct(g, temp2), c = innerProduct(h, temp2),
+      minMean = - b / 2 / c, minRisk = Math.sqrt(a - b*b / 4 / c);
+    const rf = 0.08, temp3 = r.map((r) => (r-rf)), cpDenom = innerProduct(temp3, multiply21(covInv, temp3));
     functionPlot({
       target: '#efficient-plot',
       width: 1200,
       height: 600,
-      xAxis: { label: "risk", },
-      yAxis: { label: "return", },
+      xAxis: { label: "risk", domain: [minRisk - 10, minRisk + 20], },
+      yAxis: { label: "return", domain: [minMean - 30, minMean + 30], },
       data: [{
         scope: {a, b, c,},
         y: 't',
         x : 'sqrt(a + b * t + c * t * t)',
         fnType: 'parametric',
-        range: [-100, 100],
+        range: [minMean-100, minMean+100],
+        graphType: 'polyline',
+      }, {
+        scope: {rf, cpDenom,},
+        y: 't',
+        x : 'sqrt((rf * rf - 2 * rf * t + t * t) / cpDenom)',
+        fnType: 'parametric',
+        range: [0, 100],
         graphType: 'polyline',
       }, {
         points: [
-              [0, 0.08],
+              [0, rf],
             ],
         fnType: 'points',
         graphType: 'scatter'
